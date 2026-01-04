@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="en-GB">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>TillMate — UK Coin Weight Counter (Cash-Up Helper)</title>
+    <meta name="description"
+        content="TillMate is a mobile-friendly UK coin weight counter for post office and retail cash-ups. Enter coin weights in grams to calculate coin counts, per-denomination totals, and a grand total instantly." />
+    <meta name="keywords"
+        content="UK coin weight calculator, coin counter by weight, cash up tool, till cash up, post office cash up, retail cash counter, UK coins grams, £2 £1 50p 20p 10p 5p 2p 1p weight, bootstrap jquery app, github pages" />
+    <meta name="author" content="Gaurang Patel" />
+    <meta name="theme-color" content="#0d6efd" />
+
+    <!-- Canonical (update after GitHub Pages URL is known) -->
+    <link rel="canonical" href="https://example.com/" />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="TillMate — UK Coin Weight Counter (Cash-Up Helper)" />
+    <meta property="og:description"
+        content="Enter UK coin weights in grams → get coin counts and totals instantly. Great for post office / retail cash-up." />
+    <meta property="og:url" content="https://example.com/" />
+    <meta property="og:image" content="assets/img/og-preview.png" />
+    <meta property="og:image:alt" content="TillMate UK Coin Weight Counter preview" />
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="TillMate — UK Coin Weight Counter" />
+    <meta name="twitter:description" content="Fast UK cash-up helper: weight → coin count → totals. Mobile friendly." />
+    <meta name="twitter:image" content="assets/img/og-preview.png" />
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <link rel="stylesheet" href="assets/css/style.css" />
+
+    <!-- JSON-LD (SoftwareApplication) -->
+    <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "TillMate — UK Coin Weight Counter",
+    "applicationCategory": "BusinessApplication",
+    "operatingSystem": "Web",
+    "description": "Mobile-friendly UK coin weight counter for retail and post office cash-ups. Enter weights in grams to estimate coin counts and totals.",
+    "author": {
+      "@type": "Person",
+      "name": "Gaurang Patel",
+      "url": "https://gaurangkumar-patel.github.io/portfolio"
+    }
+  }
+  </script>
+</head>
+
+<body class="bg-body-tertiary">
+    <header class="py-4 border-bottom bg-white">
+        <div class="container">
+            <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3">
+                <div>
+                    <h1 class="h3 mb-1">TillMate <span class="text-secondary">— UK Coin Weight Counter</span></h1>
+                    <p class="mb-0 text-secondary">
+                        Enter weights in <strong>grams</strong> to estimate <strong>coin counts</strong> and
+                        <strong>cash totals</strong> for quick cash-up.
+                    </p>
+                </div>
+
+                <div class="d-flex flex-wrap gap-2">
+                    <div class="btn-group" role="group" aria-label="Rounding mode">
+                        <button type="button" class="btn btn-outline-primary active" data-rounding="round"
+                            id="roundModeRound">Round</button>
+                        <button type="button" class="btn btn-outline-primary" data-rounding="floor"
+                            id="roundModeFloor">Floor</button>
+                        <button type="button" class="btn btn-outline-primary" data-rounding="ceil"
+                            id="roundModeCeil">Ceil</button>
+                    </div>
+                    <button class="btn btn-primary" id="btnSave">Save</button>
+                    <button class="btn btn-outline-danger" id="btnResetAll">Reset</button>
+                </div>
+            </div>
+
+            <div class="alert alert-info mt-3 mb-0 small">
+                Tip: If you weigh coins in a cup/bag, put the empty container weight in <strong>Tare (g)</strong>.
+                Default is 0g.
+            </div>
+        </div>
+    </header>
+
+    <main class="container py-4">
+        <div class="row g-3">
+            <div class="col-12">
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table align-middle mb-0" id="coinTable">
+                                <thead>
+                                    <tr class="table-light">
+                                        <th style="min-width: 110px;">Coin</th>
+                                        <th class="text-end">Coin Weight (g)</th>
+                                        <th style="min-width: 150px;">Weight (g)</th>
+                                        <th style="min-width: 150px;">Tare (g)</th>
+                                        <th class="text-end">Net (g)</th>
+                                        <th class="text-end">Coins</th>
+                                        <th class="text-end">Total (£)</th>
+                                        <th style="min-width: 120px;">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="coinTbody">
+                                    <!-- Rows injected by JS -->
+                                </tbody>
+                                <tfoot>
+                                    <tr class="table-light fw-semibold">
+                                        <td colspan="5" class="text-end">Grand Total</td>
+                                        <td class="text-end" id="grandCoins">0</td>
+                                        <td class="text-end" id="grandTotal">£0.00</td>
+                                        <td></td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+
+                        <div class="mt-3 d-flex flex-column flex-md-row gap-2 justify-content-between">
+                            <div class="small text-secondary">
+                                Accuracy note: scales and bag variance can cause small differences. Use
+                                <strong>Round/Floor/Ceil</strong> as needed.
+                            </div>
+                            <div class="d-flex gap-2">
+                                <button class="btn btn-outline-secondary btn-sm" id="btnFillDemo">Fill Demo</button>
+                                <button class="btn btn-outline-secondary btn-sm" id="btnClearInputs">Clear
+                                    Inputs</button>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-12">
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        <h2 class="h5 mb-2">Coin weights used (UK)</h2>
+                        <p class="mb-2 text-secondary small">
+                            You can adjust any weight below and hit <strong>Save</strong> to persist on this device.
+                        </p>
+                        <div class="row g-2" id="weightsEditor">
+                            <!-- injected by JS -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <footer class="py-4 border-top bg-white mt-4">
+        <div class="container">
+            <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-2">
+                <div class="small text-secondary">
+                    Built by <strong>Gaurang Patel</strong> •
+                    <a href="https://www.linkedin.com/in/gaurangpatel2326" target="_blank" rel="noopener">LinkedIn</a> •
+                    <a href="https://gaurangkumar-patel.github.io/portfolio" target="_blank"
+                        rel="noopener">Portfolio</a>
+                </div>
+                <div class="small text-secondary">
+                    © <span id="year"></span> TillMate • GitHub Pages ready
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- jQuery + Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script src="assets/js/app.js"></script>
+</body>
+
+</html>
